@@ -1,0 +1,4 @@
+D1 N 2 USS Excelsior
+A3 E 3 Firefly
+G6 N 5 BS Galactica
+C5 E 4 USS Enterprise
