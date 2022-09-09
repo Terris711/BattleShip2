@@ -3,6 +3,7 @@
 #include "battleship.h"
 #include "ship_locations.h"
 #include <string.h>
+#include "linkedList.h"
 
 #define COLOUR_HIT() printf("\033[0;32m") /* Set color to GREEN when hit successfully*/
 #define COLOUR_FAIL()  printf("\033[0;31m") /* Set color to RED when hit failed */
@@ -196,125 +197,125 @@ void shoot(char** table, int** board, int x, int y)
 }
 
 /* Checking from the starting point of ship till the end length of the ship, if all board[column][line] = 1, the ship is sunk => then print out the sunk message*/
-int checkSunk(char** table, int** board, int ship_count, int* numOfShipSunk)
+int checkSunk(char** table, int** board, int ship_count, int* ShipStatus)
 {
-    int i; /*row of table*/
-    int j;
-    int x,y,step; /*Ship coordinates (x,y)*/
+    int piece,x,y;
+    int lenShip;
+    int i, j, k;
     char dir;
-    char tempX,tempY,tempStep;
-    int numOfShoot;
-    numOfShoot = 0;
-    
-    
 
-    /* find x*/
+
+
     for (i = 0; i < ship_count; i++)
     {
-        /*Get x*/
-        tempX = table[i][0];
-        x = tempX - 'A';
-        
-        /*Get y*/
-        tempY = table[i][1];
-        y = tempY - '0';
-        
-        /*Get direction of the ship*/
+        piece = 0;    
+        lenShip = table[i][5] - '0';
+        x = table[i][0] - 'A';
+        y = table[i][1] - '0';
         dir = table[i][3];
 
-        /*Get length of the ship*/
-        tempStep = table[i][5];
-        step = tempStep - '0';
-        
-        
-        /* Find end looping point 
-         * If number of shoot (right) equal to step( length of the ship) => the ship is sunk */
+
+                
+        /*Everytime the ship was shoot, one piece will be removed*/
         if (dir == 'N')
         {
-            for (j = 0; j < step; j++)
+            for (j = 0; j < lenShip; j++)
             {        
                 if (board[x][y - j] == 1)
-                {
-                    numOfShoot += 1;   
+                    {
+                        piece += 1;
+                    }
                 }
-                
-            }
-                if (numOfShoot == step)
-                {
-                    *numOfShipSunk += 1;
-                
-                }
-                
-            
         }
-
-
         else if (dir == 'S')
         {
-             for (j = 0; j < step; j++)
+             for (j = 0; j < lenShip; j++)
              {        
                 if (board[x][y + j] == 1)
-                {
-                    numOfShoot += 1;   
-                }
-                
-            }
-                if (numOfShoot == step)
-                {
-                    *numOfShipSunk += 1;
-                }
-                
+                    {
+                        piece += 1;
+                    }
+             }
         }
-
-
         else if(dir == 'E')
         {
-             for (j = 0; j < step; j++)
+             for (j = 0; j < lenShip; j++)
              {        
                 if (board[x + j][y] == 1)
-                {
-                    numOfShoot += 1;   
-                }
-                
-            }
-                if (numOfShoot == step)
-                {
-                    *numOfShipSunk += 1;
-                }
-                
+                    {
+                        piece += 1;
+                    }
+
+             }
         }
-
-
         else if (dir == 'W')
         {
-             for (j = 0; j < step; j++)
+             for (j = 0; j < lenShip; j++)
              {        
                 if (board[x - j][y] == 1)
-                {
-                    numOfShoot += 1;   
-                }
-                
+                    {
+                        piece += 1;
+                    }
              }
-                if (numOfShoot == step)
-                {
-                    *numOfShipSunk += 1;
-                }
-                
         }
-    }
+      
 
+
+        /* If all ship piece was shoot */
+        if (piece == lenShip)
+       
+       {
+            /*Update ship status*/
+            ShipStatus[i] = 1;
+            
+            if (ShipStatus[i] == 1)
+            {
+                /*Print the sunk message here*/
+                printf("Ship of captain ");
+          
+                for (k = 7; k < strlen(table[i]); k++)
+                {
+                    printf("%c",table[i][k]);
+                }
+                printf("was already defeat!!\n");
+            }
+
+            
+
+            /* Because the first i index is 0 (cannot count as a ship ==> + 1*/
+
+        }
+        
+    }
 
     return 0;
 }
 
 /* if the number of ship sunk = ship_count ==> win the game*/
-/*int checkWin(int* numOfShipSunk, int ship_count, int* win)
+
+int checkWin(int* ShipStatus, int ship_count, int* win)
 {
-    if (*numOfShipSunk == ship_count)
+    if (ShipStatus[3] == 1)
     {
-        win = 1; 
+        *win = 1; 
     }
 
-    return win;
+    return *win;
 }
-*/
+
+
+void saveBoard(LinkedList* list, int** board, int* numOfCol, int* numOfRow)
+{
+    int r,c;
+    int addValue;
+
+    for ( r = 0; r < *numOfRow; r++)
+    {
+        for (c = 0; c < *numOfCol; c++)
+        {
+            addValue = board[r][c];
+            insertLast(list, &addValue);
+        }
+    }
+}
+

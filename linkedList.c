@@ -206,7 +206,8 @@ char* printElement(void* inp)
     return inp;
 }
 
-/*int main()
+/*
+int main()
 {  
    LinkedList* list = NULL;
    printListFunc* printList = printElement;

@@ -4,37 +4,50 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include "linkedList.h"
 
 
 int main(int argc, char* argv[])
 {
+    FILE* ships;
+    char* filename;
+    char singleline[150];
+
+    int ShipStatus[4];
     int** board;
     int ship_count = 4;
     int numOfRow = 7;
     int numOfCol = 7;
     int choice = -1;
     char** table;
-    int x, y, i, a;
+    int x,y,i, a, s;
     char tempRow;
-    int numOfShipSunk;
-    numOfShipSunk = 0;
     int win;
+    LinkedList* list = NULL;
+    
+
+
+    printListFunc* printList = printElement;
     win = 0; /* False */
 
 
-    FILE* ships;
-    char* filename;
-    char singleline[150];
-    
-    
 
     /*Set ships and map - Generating 2D array*/
     board = createBoard(&numOfRow, &numOfCol);
     table = shipsBoard(&ship_count, &numOfRow, &numOfCol); 
-   
+     
+    /* Initialize ship status as 0 - not being sunk */
+    for ( s = 0; s < 4; s++)
+    {
+        ShipStatus[s] = 0;
+    }
     
-    /* Read the file and extract ship location into the table(shipsBoard)*/
-       
+    printf("%d", ShipStatus[0]);
+
+
+
+
+    /* Read the file and extract ship location into the table(shipsBoard)*/  
 
     /* Check the command syntax*/
     if (argc < 2)
@@ -65,8 +78,8 @@ int main(int argc, char* argv[])
         
         /*printf("%s", table[1]);
         fflush(stdout); 
-        sleep(3);
-        fclose(ships);*/
+        sleep(3);*/
+        fclose(ships);
     }
     else 
     {
@@ -118,18 +131,40 @@ int main(int argc, char* argv[])
             shoot(table, board, x,y); 
             printf("\n");
             printGameBoard(board, &numOfRow, &numOfCol);
-
-            checkSunk(table, board, ship_count, &numOfShipSunk);
-            printf("%d", numOfShipSunk);
             
-            /*
-            win = checkWin(*numOfShipSunk, ship_count, *win)
+            /*shoot(table, board, 0,1);
+            shoot(table, board, 0,2);
+            shoot(table, board, 0,3);
+
+            shoot(table, board, 3,4);
+            shoot(table, board, 2,4);
+            shoot(table, board, 1,4);
+
+            shoot(table, board, 2,2);
+            shoot(table, board, 3,2);
+
+            shoot(table, board, 5,6);
+            shoot(table, board, 4,6);
+            shoot(table, board, 3,6);
+            shoot(table, board, 2,6);
+            shoot(table, board, 1,6);
+
+            printGameBoard(board, &numOfRow, &numOfCol);*/
+            
+            printf("\n");
+            checkSunk(table, board, ship_count, ShipStatus);
+            printf("\n");
+            
+            win = checkWin(ShipStatus, ship_count, &win);
             if (win == 1)
             {
-                printf("You win!")
+                printf("\n");
+                printf("You win!");
+                printf("\n");
             }
-            */
         }
+           
+        
         else
         {
             printf("\n");
@@ -140,7 +175,9 @@ int main(int argc, char* argv[])
 
     else if(choice == 2)
     {
-        printf("Save");
+        printf("Saving your progress .....");
+        saveBoard(list, board, &numOfRow, &numOfCol);
+        printLinkedList(list, &printList);
     }
 
     else if(choice == 3)
@@ -192,6 +229,7 @@ int main(int argc, char* argv[])
         free(table[i]);
     }
     free(table);
+
 
 
     return 0;

@@ -35,6 +35,7 @@
     void* removeLast( LinkedList* list);
 
     void printLinkedList( LinkedList* list, printListFunc* printList);
+    char* printElement(void* inp);
     void freeLinkedList( LinkedList* list, freeFunc* freeValue);
 
 #endif
